@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Section II — Format Classification</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #0f0f0d;
+    --ink-2: #3a3a35;
+    --ink-3: #7a7a72;
+    --ink-4: #b8b8b0;
+    --paper: #f7f5f0;
+    --paper-2: #edeae3;
+    --paper-3: #e2dfd6;
+    --accent: #c85a1e;
+    --accent-light: #f5ede7;
+    --teal: #1a6b55;
+    --teal-light: #e2f0eb;
+    --blue: #1e4b8a;
+    --blue-light: #e8eef8;
+    --amber: #9a6a00;
+    --amber-light: #faf3e0;
+    --rule: rgba(15,15,13,0.1);
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); line-height: 1.6; }
+
+  .page-header {
+    padding: 52px 60px 36px;
+    border-bottom: 1px solid var(--rule);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 24px;
+  }
+  .section-label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px; }
+  .page-title { font-family: 'DM Serif Display', serif; font-size: 40px; line-height: 1.1; letter-spacing: -0.02em; }
+  .page-title em { font-style: italic; color: var(--accent); }
+  .page-subtitle { font-size: 14px; color: var(--ink-3); max-width: 460px; margin-top: 10px; font-weight: 300; line-height: 1.7; }
+  .research-note { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--ink-4); letter-spacing: 0.06em; text-transform: uppercase; line-height: 1.8; text-align: right; }
+
+  .question-band {
+    padding: 20px 60px 24px;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .question-tag { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); background: var(--accent-light); padding: 4px 10px; border-radius: 3px; white-space: nowrap; border: 1px solid rgba(200,90,30,0.15); }
+  .question-text { font-size: 13px; color: var(--ink-2); font-style: italic; font-family: 'DM Serif Display', serif; }
+
+  /* DATA TABLE */
+  .data-section {
+    padding: 32px 60px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .data-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .data-title { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+  .data-hint { font-size: 11px; color: var(--ink-4); font-weight: 300; }
+
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--rule);
+    white-space: nowrap;
+  }
+  .data-table th.num { text-align: center; }
+  .data-table td { padding: 6px 12px; border-bottom: 1px solid rgba(15,15,13,0.05); vertical-align: middle; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: var(--paper-2); }
+
+  .format-name { font-size: 13px; font-weight: 500; color: var(--ink-2); }
+  .tier-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 3px;
+    display: inline-block;
+  }
+  .tier-invest  { background: var(--teal-light);  color: var(--teal); }
+  .tier-develop { background: var(--blue-light);  color: var(--blue); }
+  .tier-own     { background: var(--amber-light); color: var(--amber); }
+  .tier-trans   { background: var(--paper-2);     color: var(--ink-3); }
+
+  .num-cell { text-align: center; }
+  .editable-input {
+    width: 52px;
+    padding: 4px 6px;
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-2);
+    background: var(--paper-2);
+    border: 1px solid transparent;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+    -moz-appearance: textfield;
+  }
+  .editable-input::-webkit-inner-spin-button,
+  .editable-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+  .editable-input:focus { border-color: var(--accent); background: #fff; }
+  .editable-input:hover { border-color: var(--paper-3); }
+
+  .static-num { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--ink-3); }
+
+  .update-btn {
+    display: block;
+    margin: 20px auto 0;
+    padding: 10px 32px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #fff;
+    background: var(--ink);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: background 0.15s, transform 0.1s;
+    margin-bottom: 28px;
+  }
+  .update-btn:hover { background: var(--accent); }
+  .update-btn:active { transform: scale(0.98); }
+
+  /* CHARTS */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--rule);
+  }
+  .panel { background: var(--paper); padding: 36px 44px 44px; }
+
+  .panel-eyebrow { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-4); margin-bottom: 6px; }
+  .panel-title { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--ink); margin-bottom: 6px; letter-spacing: -0.01em; }
+  .panel-divider { width: 32px; height: 1px; background: var(--accent); margin: 10px 0 20px; opacity: 0.6; }
+  .panel-desc { font-size: 13px; color: var(--ink-3); font-weight: 300; line-height: 1.65; margin-bottom: 28px; max-width: 340px; border-left: 2px solid var(--accent); padding-left: 12px; }
+
+  .matrix-canvas-wrap { position: relative; width: 100%; height: 340px; }
+  .quadrant-labels { position: absolute; inset: 0; pointer-events: none; }
+  .q-label { position: absolute; font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 7px; border-radius: 3px; }
+  .q-invest  { top: 8px; right: 8px; background: var(--teal-light); color: var(--teal); }
+  .q-develop { top: 8px; left: 8px; background: var(--blue-light); color: var(--blue); }
+  .q-own     { bottom: 8px; left: 8px; background: var(--amber-light); color: var(--amber); }
+  .q-trans   { bottom: 8px; right: 8px; background: var(--paper-2); color: var(--ink-3); }
+
+  .matrix-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 18px; }
+  .legend-item { display: flex; align-items: flex-start; gap: 10px; padding: 9px 12px; border-radius: 6px; border: 1px solid transparent; }
+  .legend-item.invest  { background: var(--teal-light);  border-color: rgba(26,107,85,0.15); }
+  .legend-item.develop { background: var(--blue-light);  border-color: rgba(30,75,138,0.12); }
+  .legend-item.own     { background: var(--amber-light); border-color: rgba(154,106,0,0.15); }
+  .legend-item.trans   { background: var(--paper-2);     border-color: var(--rule); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+  .legend-name   { font-size: 11px; font-weight: 500; color: var(--ink-2); line-height: 1.3; }
+  .legend-action { font-size: 11px; color: var(--ink-3); font-weight: 300; line-height: 1.4; margin-top: 2px; }
+
+  .bar-canvas-wrap { position: relative; width: 100%; height: 340px; }
+  .bar-legend { display: flex; gap: 18px; margin-bottom: 18px; flex-wrap: wrap; }
+  .bar-legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--ink-2); }
+  .bar-swatch { width: 22px; height: 9px; border-radius: 2px; }
+  .swatch-current { background: #c8c4bb; }
+  .swatch-rec     { background: var(--accent); }
+  .swatch-loyalty { background: var(--teal); }
+
+  /* INSIGHT STRIP */
+  .insight-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--rule); border-top: 1px solid var(--rule); }
+  .insight-cell { background: var(--paper); padding: 22px 32px; display: flex; align-items: flex-start; gap: 14px; }
+  .insight-num { font-family: 'DM Serif Display', serif; font-size: 34px; color: var(--accent); line-height: 1; flex-shrink: 0; }
+  .insight-label { font-size: 12px; font-weight: 500; color: var(--ink-2); margin-bottom: 2px; }
+  .insight-sub { font-size: 11px; color: var(--ink-3); font-weight: 300; line-height: 1.5; }
+
+  /* FOOTER */
+  .how-to-use { padding: 32px 60px; background: var(--ink); color: var(--paper); display: grid; grid-template-columns: auto 1fr; gap: 40px; align-items: center; }
+  .htu-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-4); writing-mode: vertical-rl; transform: rotate(180deg); }
+  .htu-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+  .htu-step-num { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--accent); line-height: 1; margin-bottom: 8px; }
+  .htu-step-title { font-size: 13px; font-weight: 500; color: var(--paper); margin-bottom: 5px; }
+  .htu-step-desc { font-size: 12px; color: rgba(247,245,240,0.5); font-weight: 300; line-height: 1.6; }
+
+  @media (max-width: 900px) {
+    .page-header, .question-band, .data-section { padding-left: 24px; padding-right: 24px; }
+    .two-col { grid-template-columns: 1fr; }
+    .insight-row { grid-template-columns: 1fr; }
+    .htu-steps { grid-template-columns: 1fr; }
+    .how-to-use { padding: 32px 24px; grid-template-columns: 1fr; }
+    .htu-label { writing-mode: initial; transform: none; }
+    .panel { padding: 28px 24px 36px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div>
+    <p class="section-label">Visitor Retention Plan · Section II</p>
+    <h1 class="page-title">Format<br><em>classification</em></h1>
+    <p class="page-subtitle">Every booking decision runs through this section. Edit the scores in the table below as you gather more data — both charts update automatically.</p>
+  </div>
+  <div>
+    <p class="research-note">Based on<br>17 weeks fieldwork<br>9 event formats<br>30+ observation nights</p>
+  </div>
+</header>
+
+<div class="question-band">
+  <span class="question-tag">Main question</span>
+  <span class="question-text">What is the actionable retention strategy whereby a night venue converts first-time and occasional visitors into recurring visitors?</span>
+</div>
+
+<!-- EDITABLE DATA TABLE -->
+<div class="data-section">
+  <div class="data-header">
+    <p class="data-title">Format data — edit any score and press update</p>
+    <p class="data-hint">Scores 0–100 · Current investment reflects what Stage does today</p>
+  </div>
+
+  <table class="data-table" id="dataTable">
+    <thead>
+      <tr>
+        <th>Format</th>
+        <th>Tier</th>
+        <th class="num">Repeat trigger</th>
+        <th class="num">Visitor loyalty</th>
+        <th class="num">Current investment</th>
+        <th class="num">Recommended</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+
+  <button class="update-btn" onclick="updateCharts()">Update charts</button>
+</div>
+
+<!-- CHARTS -->
+<div class="two-col">
+  <div class="panel">
+    <p class="panel-eyebrow">Strategic instrument · SQ4 + SQ5</p>
+    <h2 class="panel-title">Community-building potential</h2>
+    <div class="panel-divider"></div>
+    <p class="panel-desc">Plot any format by how strongly it triggers repeat attendance and how much venue loyalty it builds. Quadrant position determines investment tier — not quality of the act.</p>
+    <div class="matrix-canvas-wrap">
+      <canvas id="scatterChart" role="img" aria-label="Scatter matrix of event formats by repeat attendance trigger and visitor loyalty."></canvas>
+      <div class="quadrant-labels">
+        <span class="q-label q-invest">Invest</span>
+        <span class="q-label q-develop">Develop</span>
+        <span class="q-label q-own">Own audience</span>
+        <span class="q-label q-trans">Transactional</span>
+      </div>
+    </div>
+    <div class="matrix-legend">
+      <div class="legend-item invest"><div class="legend-dot" style="background:var(--teal);"></div><div><p class="legend-name">Invest</p><p class="legend-action">Full: WA + IG + host protocol</p></div></div>
+      <div class="legend-item develop"><div class="legend-dot" style="background:var(--blue);"></div><div><p class="legend-name">Develop</p><p class="legend-action">Partial: IG story + WA</p></div></div>
+      <div class="legend-item own"><div class="legend-dot" style="background:var(--amber);"></div><div><p class="legend-name">Own audience</p><p class="legend-action">Basic: agenda post only</p></div></div>
+      <div class="legend-item trans"><div class="legend-dot" style="background:#b8b8b0;"></div><div><p class="legend-name">Transactional</p><p class="legend-action">Minimal: calendar listing</p></div></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <p class="panel-eyebrow">Tactical instrument · handover action</p>
+    <h2 class="panel-title">Where to shift effort</h2>
+    <div class="panel-divider"></div>
+    <p class="panel-desc">Current investment is flat and low across most formats. The gap between grey and orange is the strategy this plan hands over. Green shows the loyalty return that justifies it.</p>
+    <div class="bar-legend">
+      <div class="bar-legend-item"><div class="bar-swatch swatch-current"></div><span>Current investment</span></div>
+      <div class="bar-legend-item"><div class="bar-swatch swatch-rec"></div><span>Recommended</span></div>
+      <div class="bar-legend-item"><div class="bar-swatch swatch-loyalty"></div><span>Visitor loyalty</span></div>
+    </div>
+    <div class="bar-canvas-wrap">
+      <canvas id="barChart" role="img" aria-label="Grouped bar chart showing current investment, recommended investment, and visitor loyalty per format."></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- INSIGHT STRIP -->
+<div class="insight-row">
+  <div class="insight-cell">
+    <div class="insight-num">55%</div>
+    <div><p class="insight-label">Community seekers in audience</p><p class="insight-sub">Already returning regardless of what's on. Growing this base is the financial argument.</p></div>
+  </div>
+  <div class="insight-cell">
+    <div class="insight-num">2</div>
+    <div><p class="insight-label">Formats in the Invest tier</p><p class="insight-sub">Karaoke Circus and Jam Session. Visitors return for the venue, not the performer.</p></div>
+  </div>
+  <div class="insight-cell">
+    <div class="insight-num">6.5</div>
+    <div><p class="insight-label">Average return score, regulars</p><p class="insight-sub">Out of 7. Community seekers return regardless of format — loyalty is to Stage, not the act.</p></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="how-to-use">
+  <p class="htu-label">How to use</p>
+  <div class="htu-steps">
+    <div>
+      <p class="htu-step-num">01</p>
+      <p class="htu-step-title">New booking decision</p>
+      <p class="htu-step-desc">Place the format on the matrix. Find its position by repeat attendance trigger (x) and loyalty likelihood (y). The quadrant tells you the investment tier.</p>
+    </div>
+    <div>
+      <p class="htu-step-num">02</p>
+      <p class="htu-step-title">Allocate effort</p>
+      <p class="htu-step-desc">Invest tier gets WhatsApp broadcast, Instagram post, and host protocol on the night. Transactional gets a calendar listing. Nothing in between is wasted.</p>
+    </div>
+    <div>
+      <p class="htu-step-num">03</p>
+      <p class="htu-step-title">Update as you learn</p>
+      <p class="htu-step-desc">After each cycle, edit the scores in the table above and press Update. If a format's return rate rises, the dot moves up — and the recommended investment adjusts.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const formats = [
+  { name: 'Karaoke Circus',            tier: 'invest',  repeat: 90, loyalty: 90, current: 35, recommended: 70 },
+  { name: 'Jam Session',               tier: 'invest',  repeat: 85, loyalty: 85, current: 20, recommended: 70 },
+  { name: 'Pub Quiz',                  tier: 'develop', repeat: 60, loyalty: 65, current: 20, recommended: 50 },
+  { name: 'Comedy Night',              tier: 'develop', repeat: 55, loyalty: 58, current: 20, recommended: 40 },
+  { name: 'Cover bands',               tier: 'develop', repeat: 50, loyalty: 48, current: 20, recommended: 30 },
+  { name: 'Original bands (local)',    tier: 'own',     repeat: 35, loyalty: 38, current: 20, recommended: 20 },
+  { name: 'Original bands (external)', tier: 'trans',   repeat: 20, loyalty: 22, current: 20, recommended: 20 },
+  { name: 'Club Nights',               tier: 'trans',   repeat: 15, loyalty: 20, current: 20, recommended: 22 },
+  { name: 'Singer-songwriter',         tier: 'trans',   repeat: 18, loyalty: 18, current: 20, recommended: 10 },
+];
+
+const tierColors = { invest: '#1a6b55', develop: '#1e4b8a', own: '#9a6a00', trans: '#b8b8b0' };
+const tierLabels = { invest: 'Invest', develop: 'Develop', own: 'Own audience', trans: 'Transactional' };
+
+function buildTable() {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+  formats.forEach((f, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span class="format-name">${f.name}</span></td>
+      <td><span class="tier-badge tier-${f.tier}">${tierLabels[f.tier]}</span></td>
+      <td class="num-cell"><input class="editable-input" type="number" min="0" max="100" value="${f.repeat}"    data-i="${i}" data-field="repeat"      /></td>
+      <td class="num-cell"><input class="editable-input" type="number" min="0" max="100" value="${f.loyalty}"  data-i="${i}" data-field="loyalty"     /></td>
+      <td class="num-cell"><input class="editable-input" type="number" min="0" max="100" value="${f.current}"  data-i="${i}" data-field="current"     /></td>
+      <td class="num-cell"><input class="editable-input" type="number" min="0" max="100" value="${f.recommended}" data-i="${i}" data-field="recommended" /></td>
+    `;
+    tbody.appendChild(tr);
+  });
+  document.querySelectorAll('.editable-input').forEach(inp => {
+    inp.addEventListener('change', () => {
+      const i = +inp.dataset.i;
+      const field = inp.dataset.field;
+      formats[i][field] = Math.min(100, Math.max(0, +inp.value || 0));
+      updateTierBadge(i);
+    });
+  });
+}
+
+function updateTierBadge(i) {
+  const f = formats[i];
+  const avg = (f.repeat + f.loyalty) / 2;
+  let tier = 'trans';
+  if (avg >= 75) tier = 'invest';
+  else if (avg >= 50) tier = 'develop';
+  else if (avg >= 35) tier = 'own';
+  formats[i].tier = tier;
+  const badges = document.querySelectorAll('.tier-badge');
+  if (badges[i]) {
+    badges[i].className = `tier-badge tier-${tier}`;
+    badges[i].textContent = tierLabels[tier];
+  }
+}
+
+const tooltipStyle = {
+  backgroundColor: '#0f0f0d',
+  titleColor: '#f7f5f0',
+  bodyColor: 'rgba(247,245,240,0.7)',
+  padding: 10,
+  cornerRadius: 4,
+  titleFont: { family: 'DM Sans', size: 12 },
+  bodyFont: { family: 'DM Mono', size: 11 },
+};
+
+const quadrantPlugin = {
+  id: 'quadrants',
+  beforeDraw(chart) {
+    const { ctx, chartArea: { left, right, top, bottom, width, height } } = chart;
+    const midX = left + width / 2;
+    const midY = top + height / 2;
+    ctx.save();
+    [
+      { x: midX, y: top,  w: right-midX, h: midY-top,    fill: 'rgba(26,107,85,0.05)' },
+      { x: left, y: top,  w: midX-left,  h: midY-top,    fill: 'rgba(30,75,138,0.05)' },
+      { x: left, y: midY, w: midX-left,  h: bottom-midY, fill: 'rgba(154,106,0,0.05)' },
+      { x: midX, y: midY, w: right-midX, h: bottom-midY, fill: 'rgba(184,184,176,0.08)' },
+    ].forEach(q => { ctx.fillStyle = q.fill; ctx.fillRect(q.x, q.y, q.w, q.h); });
+    ctx.strokeStyle = 'rgba(15,15,13,0.08)';
+    ctx.setLineDash([3, 4]);
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(midX, top);  ctx.lineTo(midX, bottom); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(left, midY); ctx.lineTo(right, midY);  ctx.stroke();
+    ctx.restore();
+  }
+};
+
+const labelPlugin = {
+  id: 'dotLabels',
+  afterDatasetsDraw(chart) {
+    const { ctx } = chart;
+    ctx.save();
+    ctx.font = '500 10px "DM Sans", sans-serif';
+    chart.data.datasets.forEach((ds, i) => {
+      const meta = chart.getDatasetMeta(i);
+      if (!meta.hidden && meta.data.length) {
+        const pt = meta.data[0];
+        const px = pt.x, py = pt.y;
+        ctx.fillStyle = 'rgba(58,58,53,0.72)';
+        const offX = px > 55 ? -9 : 11;
+        const offY = py > 55 ? 14 : -6;
+        ctx.textAlign = px > 55 ? 'right' : 'left';
+        ctx.fillText(ds.label, px + offX, py + offY);
+      }
+    });
+    ctx.restore();
+  }
+};
+
+let scatterChart, barChart;
+
+function buildScatter() {
+  if (scatterChart) scatterChart.destroy();
+  scatterChart = new Chart(document.getElementById('scatterChart'), {
+    type: 'scatter',
+    data: {
+      datasets: formats.map(f => ({
+        label: f.name,
+        data: [{ x: f.repeat, y: f.loyalty }],
+        backgroundColor: tierColors[f.tier],
+        borderColor: tierColors[f.tier],
+        pointRadius: 7,
+        pointHoverRadius: 9,
+      }))
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { ...tooltipStyle, callbacks: { label: ctx => ` ${ctx.dataset.label}  ·  repeat: ${ctx.parsed.x}  loyalty: ${ctx.parsed.y}` } }
+      },
+      scales: {
+        x: { min: 0, max: 100, title: { display: true, text: 'Repeat attendance trigger →', color: '#7a7a72', font: { family: 'DM Mono', size: 10 } }, grid: { color: 'rgba(15,15,13,0.06)' }, ticks: { color: '#b8b8b0', font: { family: 'DM Mono', size: 10 }, stepSize: 25 } },
+        y: { min: 0, max: 100, title: { display: true, text: 'Visitor loyalty likelihood →', color: '#7a7a72', font: { family: 'DM Mono', size: 10 } }, grid: { color: 'rgba(15,15,13,0.06)' }, ticks: { color: '#b8b8b0', font: { family: 'DM Mono', size: 10 }, stepSize: 25 } }
+      }
+    },
+    plugins: [quadrantPlugin, labelPlugin]
+  });
+}
+
+function buildBar() {
+  if (barChart) barChart.destroy();
+  barChart = new Chart(document.getElementById('barChart'), {
+    type: 'bar',
+    data: {
+      labels: formats.map(f => f.name.replace(' (', '\n(')),
+      datasets: [
+        { label: 'Current investment', data: formats.map(f => f.current),     backgroundColor: '#c8c4bb', borderWidth: 0, borderRadius: 3, borderSkipped: false },
+        { label: 'Recommended',        data: formats.map(f => f.recommended), backgroundColor: '#c85a1e', borderWidth: 0, borderRadius: 3, borderSkipped: false },
+        { label: 'Visitor loyalty',    data: formats.map(f => f.loyalty),     backgroundColor: '#1a6b55', borderWidth: 0, borderRadius: 3, borderSkipped: false },
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { ...tooltipStyle, callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}` } }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#7a7a72', font: { family: 'DM Sans', size: 10 }, maxRotation: 35, autoSkip: false } },
+        y: { min: 0, max: 100, grid: { color: 'rgba(15,15,13,0.06)' }, ticks: { color: '#b8b8b0', font: { family: 'DM Mono', size: 10 }, stepSize: 25 } }
+      }
+    }
+  });
+}
+
+function updateCharts() {
+  document.querySelectorAll('.editable-input').forEach(inp => {
+    formats[+inp.dataset.i][inp.dataset.field] = Math.min(100, Math.max(0, +inp.value || 0));
+  });
+  formats.forEach((_, i) => updateTierBadge(i));
+  buildScatter();
+  buildBar();
+  const btn = document.querySelector('.update-btn');
+  btn.textContent = 'Updated ✓';
+  btn.style.background = '#1a6b55';
+  setTimeout(() => { btn.textContent = 'Update charts'; btn.style.background = ''; }, 1800);
+}
+
+buildTable();
+buildScatter();
+buildBar();
+</script>
+</body>
+</html>
